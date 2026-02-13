@@ -1,38 +1,44 @@
-name: End-to-End Tests
+name: E2E Tests
 
 on:
-  push:
-    branches:
-      - main        # Run when code is merged to main
   pull_request:
-    branches:
-      - main        # Run when a PR targets main
-  workflow_dispatch:  # Manual trigger
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:      # Manual trigger
+    inputs:
+      browser_mode:
+        description: 'Run tests in Headless or Headed mode'
+        required: true
+        default: 'Headless'
+        type: choice
+        options:
+          - Headless
+          - Headed
 
 jobs:
-  e2e-tests:
+  e2e:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.14'
+          python-version: "3.14"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest playwright
+          pip install -r requirements.txt
+          pip install playwright pytest-playwright
           playwright install
 
-      - name: Run end-to-end tests
+      - name: Run E2E tests
         run: |
-          # Check if manual or merge to main
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            pytest tests/end_to_end.py --headed
-          else
-            pytest tests/end_to_end.py --headless
-          fi
+          echo "Running tests in $HEADLESS mode"
+          pytest tests/end_to_end.py
+        env:
+          HEADLESS: ${{ github.event.inputs.browser_mode == 'Headless' }}
