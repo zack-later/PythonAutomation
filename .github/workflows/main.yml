@@ -5,16 +5,7 @@ on:
     branches: [main]
   push:
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      browser_mode:
-        description: 'Run tests in Headless or Headed mode'
-        required: true
-        default: 'Headless'
-        type: choice
-        options:
-          - Headless
-          - Headed
+  workflow_dispatch: # manual trigger
 
 jobs:
   e2e:
@@ -36,10 +27,5 @@ jobs:
           playwright install
 
       - name: Run E2E tests
-        run: |
-          if [ "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.browser_mode == 'Headed' }}" == "true" ]; then
-              HEADLESS_FLAG="--headed"
-          else
-              HEADLESS_FLAG="--headless"
-          fi
-          python -m pytest tests/end_to_end.py $HEADLESS_FLAG
+        run: python -m pytest tests/end_to_end.py --headed
+        continue-on-error: false
