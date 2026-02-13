@@ -2,9 +2,19 @@ name: E2E Tests
 
 on:
   pull_request:
-    branches:
-      - main
-  workflow_dispatch:  # manual trigger
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:      # Manual trigger
+    inputs:
+      browser_mode:
+        description: 'Run tests in Headless or Headed mode'
+        required: true
+        default: 'Headless'
+        type: choice
+        options:
+          - Headless
+          - Headed
 
 jobs:
   e2e:
@@ -17,15 +27,18 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.14'
+          python-version: "3.14"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest-playwright playwright
+          pip install -r requirements.txt
+          pip install playwright pytest-playwright
           playwright install
 
       - name: Run E2E tests
         run: |
-          python -m pytest tests/end_to_end.py --headed
-        continue-on-error: false
+          echo "Running tests in $HEADLESS mode"
+          pytest tests/end_to_end.py
+        env:
+          HEADLESS: ${{ github.event.inputs.browser_mode == 'Headless' }}
