@@ -2,6 +2,7 @@ import os
 import pytest
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from dotenv import load_dotenv
 
 # Directories for artifacts
 ARTIFACTS_DIR = Path("artifacts")
@@ -9,6 +10,8 @@ SCREENSHOTS_DIR = ARTIFACTS_DIR / "screenshots"
 VIDEOS_DIR = ARTIFACTS_DIR / "videos"
 SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
 VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
+
+load_dotenv()
 
 @pytest.fixture(scope="session")
 def browser():
@@ -23,6 +26,13 @@ def browser():
         )
         yield browser
         browser.close()
+
+@pytest.fixture(scope="session")
+def credentials():
+    return{
+        "username": os.getenv("TEST_USERNAME"),
+        "password": os.getenv("TEST_PASSWORD")
+    }
 
 @pytest.fixture(scope="function")
 def page(browser, request):
