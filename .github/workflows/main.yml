@@ -1,13 +1,13 @@
 name: E2E Tests
 
 on:
-  pull_request:
-    branches:
-      - main
   push:
     branches:
       - main
-  workflow_dispatch:  # Manual trigger
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Manual trigger
 
 jobs:
   e2e:
@@ -31,3 +31,17 @@ jobs:
       - name: Run E2E tests
         run: python -m pytest tests/end_to_end.py
         continue-on-error: false
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: artifacts/screenshots/
+
+      - name: Upload videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos
+          path: artifacts/videos/
