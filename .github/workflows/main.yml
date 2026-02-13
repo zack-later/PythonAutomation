@@ -2,10 +2,12 @@ name: E2E Tests
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
   push:
-    branches: [main]
-  workflow_dispatch: # manual trigger
+    branches:
+      - main
+  workflow_dispatch:  # Manual trigger
 
 jobs:
   e2e:
@@ -27,5 +29,5 @@ jobs:
           playwright install
 
       - name: Run E2E tests
-        run: python -m pytest tests/end_to_end.py --headed
+        run: python -m pytest tests/end_to_end.py
         continue-on-error: false
