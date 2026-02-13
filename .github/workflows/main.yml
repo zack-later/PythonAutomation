@@ -1,20 +1,17 @@
-name: End-to-End Tests
+name: E2E Tests
 
 on:
-  push:
-    branches:
-      - main        # Run when code is merged to main
   pull_request:
     branches:
-      - main        # Run when a PR targets main
-  workflow_dispatch:  # Manual trigger
+      - main
+  workflow_dispatch:  # manual trigger
 
 jobs:
-  e2e-tests:
+  e2e:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -25,14 +22,10 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest playwright
+          pip install pytest pytest-playwright playwright
           playwright install
 
-      - name: Run end-to-end tests
+      - name: Run E2E tests
         run: |
-          # Check if manual or merge to main
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            pytest tests/end_to_end.py --headed
-          else
-            pytest tests/end_to_end.py --headless
-          fi
+          python -m pytest tests/end_to_end.py --headed
+        continue-on-error: false
