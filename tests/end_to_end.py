@@ -1,11 +1,13 @@
 from playwright.sync_api import expect
 from pages import LoginPage, WelcomePage
 
-def test_welcome_and_login(page): 
-    login_page = LoginPage(page)
+def test_welcome_and_login(page, base_url, credentials): 
+    login_page = LoginPage(page, base_url)
     login_page.goto()
-    login_page.fillusername("will")
-    login_page.fillpassword("will")
-    welcome_page = login_page.click_login_button()
+    welcome_page = login_page.login(
+        credentials["username"],
+        credentials["password"]
+
+    )
     expect(page).to_have_title("Home » SuiteCRM Demo")
     welcome_page.verify_page_loaded()
