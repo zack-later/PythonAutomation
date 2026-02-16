@@ -3,7 +3,7 @@ name: E2E Tests
 on:
   push:
     branches:
-      - main
+      - '**'
   pull_request:
     branches:
       - main
@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest-playwright playwright
+          pip install pytest pytest-playwright playwright pytest-dotenv
           playwright install
 
       - name: Run E2E tests
