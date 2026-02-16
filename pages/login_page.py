@@ -16,12 +16,8 @@ class LoginPage():
     def goto(self):
         self.page.goto(f"{self.base_url}{self.LOGIN_PATH}")
 
-    def fillusername(self, username: str):
+    def login(self, username: str, password:str):
         self.user_name_field.fill(username)
-    
-    def fillpassword(self, password: str):
         self.password_field.fill(password)
-
-    def click_login_button(self):
         self.log_in_button.click()
         return WelcomePage(self.page)
