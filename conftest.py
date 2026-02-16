@@ -2,6 +2,9 @@ import os
 import pytest
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Directories for artifacts
 ARTIFACTS_DIR = Path("artifacts")
@@ -48,3 +51,14 @@ def page(browser, request):
     # Close page and context (video gets saved on context close)
     page.close()
     context.close()
+
+@pytest.fixture(scope="session")
+def base_url():
+    return os.getenv("BASE_URL")
+
+@pytest.fixture(scope="session")
+def credentials():
+    return {
+        "username": os.getenv("TEST_USERNAME"),
+        "password": os.getenv("TEST_PASSWORD")
+    } 
